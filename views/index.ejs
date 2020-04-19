@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WAI test</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+    <div class="container">
+<table><th></th><tr><td>
+      <fieldset>
+        <form action="/" method="post">
+          <label for="days">Worcester Area:</label><br>
+	  <select id="days" name="day">
+	    <option value="0">Sunday </option>
+	    <option value="1">Monday </option>
+	    <option value="2">Tuesday </option>
+	    <option value="3">Wednesday </option>
+	    <option value="4">Thursday </option>
+	    <option value="5">Friday </option>
+	    <option value="6">Saturday </option>
+	  </select>
+          <input type="submit" class="ghost-button" value="Get Day">
+	  <input type="hidden" name="sheetrange" value='Worcester Area!A8:K'>
+        </form>
+	<br>
+	<form  action="/" method="post" >
+	  <button type="submit" name="day" value="<%date=new Date;var d=date.getDay()%><%= d%>">
+	    Meetings Today
+	  </button>
+	  <input type="hidden" name="sheetrange" value='Worcester Area!A8:K'>	  
+	</form>
+      </fieldset>
+      </td><td>
+      <fieldset>
+        <form action="/" method="post">
+          <label for="days">non-Worcester Area:</label><br>
+	  <select id="days" name="day">
+	    <option value="0">Sunday </option>
+	    <option value="1">Monday </option>
+	    <option value="2">Tuesday </option>
+	    <option value="3">Wednesday </option>
+	    <option value="4">Thursday </option>
+	    <option value="5">Friday </option>
+	    <option value="6">Saturday </option>
+	  </select>
+          <input type="submit" class="ghost-button" value="Get Day">
+	  <input type="hidden" name="sheetrange" value='Non-Worcester Area!A8:K'>
+        </form>
+	<br>
+	<form  action="/" method="post" >
+	  <button type="submit" name="day" value="<%date=new Date;var d=date.getDay()%><%= d%>">
+	    Meetings Today
+	  </button>
+	  <input type="hidden" name="sheetrange" value='Non-Worcester Area!A8:K'>	  
+	</form>
+      </fieldset>
+      </td></tr></table>
+    </div>
+  </body>
+  <% if (rowobj.hits !== null){ %>
+  <table border="2"><tr><th><%= rowobj.day%></th><th>Time</th><th>Format</th><th>URL</th><th>ID</th><th>Password</th><th>Dial-in</th> </tr> 
+<% rowobj.hits.forEach(function(i){ %>
+    <tr>
+      <td><%= i.time %></td>
+      <td><%= i.name%></td>
+      <td><%= i.topic%></td>
+      <td><a href=<%= i.url%> >Zoom link</a></td>
+      <td><%= i.mtgid%></td>
+      <td><%= i.pwd%></td>
+      <td><%= i.phone%></td>
+    </tr>
+    <% })} %>
+    </table>
+    
+</html>
