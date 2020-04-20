@@ -23,13 +23,13 @@ var content=fs.readFileSync('credentials.json');
 
 
 app.post('/', function (req, res) {
-
+    
 	// Authorize a client with credentials, then call the Google Sheets API.
 	authorize(JSON.parse(content), function (auth) {
 	    const sheets = google.sheets({version: 'v4', auth});
 	    sheets.spreadsheets.values.get({
 		spreadsheetId: '1c8pXr0tKcMl_JHvQ7VGz7X4DHvStO2qprOKdJ_XV8ls',
-		range: req.body.sheetrange,
+		range: req.body.sheetrange=='Worc'?'Worcester Area!A8:K':'Non-Worcester Area!A3:K',
 	    }, (err, response) => {
 		if (err) return console.log('The API returned an error: ' + err);
 		let rows = response.data.values;
@@ -38,10 +38,16 @@ app.post('/', function (req, res) {
 		if (rows.length) {
 		    // console.log(response.data);
 		    
-		    let day=daysoftheweek[req.body.day];console.log("req.body.day="+req.body.day)
+		    let day=daysoftheweek[req.body.day];
+		    console.log("sheetrange="+req.body.sheetrange+"\n"+
+				"req.body.day="+req.body.day+"\n"+
+				req.hostname+"\n"+
+				req.ip+"\n"+
+				Date(Date.UTC(Date.now())) )
 		    let rowobj = {};
 		    rowobj.hits = [];
 		    rowobj.day = day;
+		    rowobj.checked = req.body.sheetrange;
 		    rows.map((row) => {
 			if(`${row[0]}`== day){
 			    rowobj.hits.push({time:row[1], name:row[2],topic:row[3],url:row[4],mtgid:row[5],pwd:row[6],phone:row[7]});
@@ -63,7 +69,6 @@ app.post('/', function (req, res) {
 	}
 		 )
 	
-	console.log(req.body.day);
 }
 	)
 	       
@@ -75,6 +80,7 @@ app.post('/', function (req, res) {
 app.get('/', function (req, res) {
     let rowobj={};
     rowobj.hits=null;
+    rowobj.checked='Worc';
     res.render('index',{rowobj: rowobj,error: null})
 })
 
