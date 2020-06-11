@@ -30,7 +30,6 @@
 	</form>
       </fieldset>
     </div>
-  </body>
   <% if (rowobj.hits !== null){ %>
   <table border="2"><tr><th><%= rowobj.day%></th><th>Time</th><th>Format</th><th>URL</th><th>ID</th><th>Password</th><th>Dial-in</th> </tr> 
 <% rowobj.hits.forEach(function(i){ %>
@@ -45,5 +44,5 @@
     </tr>
     <% })} %>
     </table>
-    
+  </body>    
 </html>
