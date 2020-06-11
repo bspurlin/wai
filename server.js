@@ -49,8 +49,15 @@ app.post('/', function (req, res) {
 		    rowobj.day = day;
 		    rowobj.checked = req.body.sheetrange;
 		    rows.map((row) => {
+			let localurl = "";
+			try { localurl = new URL(row[4])}catch(_){localurl=undefined}
+			if (localurl == undefined || localurl.protocol != "https:") {
+			    localurl = row[4]
+			} else {
+			    localurl = '<a href="' + row[4] +'">Zoom URL</a>'
+			}
 			if(`${row[0]}`== day){
-			    rowobj.hits.push({time:row[1], name:row[2],topic:row[3],url:row[4],mtgid:row[5],pwd:row[6],phone:row[7]});
+			    rowobj.hits.push({time:row[1], name:row[2],topic:row[3],url:localurl,mtgid:row[5],pwd:row[6],phone:row[7]});
 			    //console.log(row[0] + "\t" + row[4])
 			}
 		    }
@@ -101,3 +108,4 @@ function authorize(credentials, callback) {
     callback(oAuth2Client);
   });
 }
+
