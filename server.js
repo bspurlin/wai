@@ -1,3 +1,5 @@
+//This program is provided under the terms of the GNU General Public License version 2 only.
+
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
@@ -13,6 +15,11 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 const TOKEN_PATH = 'token.json';
 const daysoftheweek=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
+const sheetRange= {
+    "Worc": 'Worcester Area!A8:K',
+    "nonWorc": 'Non-Worcester Area!A3:K',
+    "inPerson": 'Resumed/New!A4:K'
+}
 
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -29,7 +36,7 @@ app.post('/', function (req, res) {
 	    const sheets = google.sheets({version: 'v4', auth});
 	    sheets.spreadsheets.values.get({
 		spreadsheetId: '1c8pXr0tKcMl_JHvQ7VGz7X4DHvStO2qprOKdJ_XV8ls',
-		range: req.body.sheetrange=='Worc'?'Worcester Area!A8:K':'Non-Worcester Area!A3:K',
+		range: sheetRange[req.body.sheetrange]
 	    }, (err, response) => {
 		if (err) return console.log('The API returned an error: ' + err);
 		let rows = response.data.values;
@@ -92,7 +99,7 @@ app.get('/', function (req, res) {
 })
 
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+  console.log('App listening on port 3000!')
 })
 
 
