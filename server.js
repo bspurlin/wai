@@ -61,7 +61,7 @@ app.post('/', function (req, res) {
 			if (localurl == undefined || localurl.protocol != "https:") {
 			    localurl = row[4]
 			} else {
-			    localurl = '<a href="' + row[4] +'">Zoom URL</a>'
+			    localurl = '<a class="ghost-button" href="' + row[4] +'">Zoom URL</a>'
 			}
 			if(`${row[0]}`== day){
 			    rowobj.hits.push({time:row[1], name:row[2],topic:row[3],url:localurl,mtgid:row[5],pwd:row[6],phone:row[7]});

@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WAI On Line Meetings</title>
-    <link rel="stylesheet" type="text/css" href="/public/style.css">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+    <title>WAI On Line and in Person Meetings</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+
   </head>
   <body>
     <div class="container">
@@ -13,13 +13,13 @@
 	<fieldset>
 	  <input type="radio" name="sheetrange" id="Worc" value="Worc"
 		 <% rowobj.pagecheck='Worc';if (rowobj.checked == 'Worc'){  %> checked <%;}%> > 
-	  <label for="Worc">Worcester Area On Line</label>
-	  <input type="radio" name="sheetrange" id="nonWorc" value="nonWorc"
-		 <%  rowobj.pagecheck='nonWorc';if (rowobj.checked == 'nonWorc'){  %> checked <%;}%> > 
-	  <label for="nonWorc">Non-Worcester Area On Line</label>
+	  <label for="Worc">On Line (Zoom) Meetings</label>
 	  <input type="radio" name="sheetrange" id="inPerson" value="inPerson"
 		 <%  rowobj.pagecheck='inPerson';if (rowobj.checked == 'inPerson'){  %> checked <%;}%> > 
 	  <label for="inPerson">In Person Meetings</label>
+	  <input type="radio" name="sheetrange" id="nonWorc" value="nonWorc"
+		 <%  rowobj.pagecheck='nonWorc';if (rowobj.checked == 'nonWorc'){  %> checked <%;}%> > 
+	  <label for="nonWorc">Non-Worc On Line</label><br>
 	  <button type="submit" name="day" value="<%date=new Date;var d=date.getDay()%><%= d%>">
 	    Meetings Today
 	  </button>
@@ -34,8 +34,8 @@
       </form>
     </div>
   <% if (rowobj.hits !== null){ %>
-  <table border="2"><tr>
-      <th><%= rowobj.day%></th>
+  <table><tr>
+      <th><%= rowobj.day %></th>
       <th>Name</th>
       <th>Format</th>
       <th><%= rowobj.checked == 'inPerson'?"Building":"URL" %></th>
