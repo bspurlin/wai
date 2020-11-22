@@ -2,7 +2,7 @@
     "name": "wai",
     "version": "",
     "scripts": {
-	"dev": "npx supervisor server.js > super.out 2>&1",
+	"dev": "npx supervisor server.js >> super.out 2>&1",
 	"start": "node server.js"
     },
     "dependencies": {
