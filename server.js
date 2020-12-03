@@ -31,61 +31,18 @@ var content=fs.readFileSync('credentials.json');
 
 app.post('/', function (req, res) {
     
-	// Authorize a client with credentials, then call the Google Sheets API.
-	authorize(JSON.parse(content), function (auth) {
-	    const sheets = google.sheets({version: 'v4', auth});
-	    sheets.spreadsheets.values.get({
-		spreadsheetId: '1c8pXr0tKcMl_JHvQ7VGz7X4DHvStO2qprOKdJ_XV8ls',
-		range: sheetRange[req.body.sheetrange]
-	    }, (err, response) => {
-		if (err) return console.log('The API returned an error: ' + err);
-		let rows = response.data.values;
-		//console.log('rows=' + JSON.stringify(rows));	    
-
-		if (rows.length) {
-		    // console.log(response.data);
-		    
-		    let day=daysoftheweek[req.body.day];
-		    console.log("sheetrange="+req.body.sheetrange+"\n"+
-				"req.body.day="+req.body.day+"\n"+
-				req.hostname+"\n"+
-				req.ip+"\n"+
-				Date(Date.UTC(Date.now())) )
-		    let rowobj = {};
-		    rowobj.hits = [];
-		    rowobj.day = day;
-		    rowobj.checked = req.body.sheetrange;
-		    rows.map((row) => {
-			let localurl = "";
-			try { localurl = new URL(row[4])}catch(_){localurl=undefined}
-			if (localurl == undefined || localurl.protocol != "https:") {
-			    localurl = row[4]
-			} else {
-			    localurl = '<a class="ghost-button" href="' + row[4] +'">Zoom URL</a>'
-			}
-			if(`${row[0]}`== day){
-			    rowobj.hits.push({time:row[1], name:row[2],topic:row[3],url:localurl,mtgid:row[5],pwd:row[6],phone:row[7]});
-			    //console.log(row[0] + "\t" + row[4])
-			}
-		    }
-			    )
-		    let testtext="test";
-		    //console.log(JSON.stringify(rowobj));
-		    res.render('index',{rowobj: rowobj, error:null})
-
-		} else {
-		    console.log('No data found.');
-		}
-
-	    } 
-					  )
-
-	}
-		 )
-	
-}
-	)
-	       
+    // Authorize a client with credentials, then call the Google Sheets API.
+    // Pass the err, response from the sheets API along with the app.post() req, res
+    // to sheetresponse() where the work is done.
+    
+    authorize(JSON.parse(content), function (auth) {
+	const sheets = google.sheets({version: 'v4', auth});
+	sheets.spreadsheets.values.get({
+	    spreadsheetId: '1c8pXr0tKcMl_JHvQ7VGz7X4DHvStO2qprOKdJ_XV8ls',
+	    range: sheetRange[req.body.sheetrange]
+	}, (err, response) => {sheetresponse(err, response, req, res)}) //get
+    }) // authorize
+}) //post
 	
 
 	
@@ -101,6 +58,53 @@ app.get('/', function (req, res) {
 app.listen(3000, function () {
   console.log('App listening on port 3000!')
 })
+
+
+// sheetresponse
+// err, response from Google Sheets API
+// req, res from Express app.post
+
+function sheetresponse(err, response, req, res){
+    if (err) return console.log('The API returned an error: ' + err);
+    let rows = response.data.values;
+    //console.log('rows=' + JSON.stringify(rows));	    
+    
+    if (rows.length) {
+	// console.log(response.data);
+	
+	let day=daysoftheweek[req.body.day];
+	console.log("sheetrange="+req.body.sheetrange+"\n"+
+		    "req.body.day="+req.body.day+"\n"+
+		    req.hostname+"\n"+
+		    req.ip+"\n"+
+		    Date(Date.UTC(Date.now())) )
+	let rowobj = {};
+	rowobj.hits = [];
+	rowobj.day = day;
+	rowobj.checked = req.body.sheetrange;
+	rows.forEach((row) => {
+	    // Test that the cell is a URL and add an a element if so.
+	    let localurl = "";
+	    try { localurl = new URL(row[4])}catch(_){localurl=undefined}
+	    if (localurl == undefined || localurl.protocol != "https:") {
+		localurl = row[4]
+	    } else {
+		localurl = '<a class="ghost-button" href="' + row[4] +'">Zoom URL</a>'
+	    }
+	    // Populate the rowobj with appropriate meeting values
+	    // to be passed to the ejs template
+	    if(`${row[0]}`== day){
+		rowobj.hits.push({time:row[1], name:row[2],topic:row[3],url:localurl,mtgid:row[5],pwd:row[6],phone:row[7]});
+		//console.log(row[0] + "\t" + row[4])
+	    }
+	}) //rows.forEach
+	//console.log(JSON.stringify(rowobj));
+	res.render('index',{rowobj: rowobj, error:null})
+	
+    } else {
+	console.log('No data found.');
+    }
+} 
 
 
 function authorize(credentials, callback) {
