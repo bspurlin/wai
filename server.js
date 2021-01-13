@@ -2,7 +2,6 @@
 
 const express = require('express')
 const app = express()
-const bodyParser = require('body-parser')
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
@@ -22,7 +21,7 @@ const sheetRange= {
 }
 
 app.use(express.static('public'))
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }))
 app.set('view engine', 'ejs')
 
     // Load client secrets from a local file.
